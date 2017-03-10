@@ -1,4 +1,7 @@
 from prometheus_client import Counter, Histogram
+from django.conf import settings
+from django_prometheus.exports import SetupPrometheusExportsFromConfig
+from django_prometheus.migrations import ExportMigrations
 from django_prometheus.utils import Time, TimeSince, PowersOf
 
 requests_total = Counter(
@@ -18,6 +21,13 @@ requests_unknown_latency_before = Counter(
 
 
 class PrometheusBeforeMiddleware(object):
+
+    def __init__(self, get_response=None):
+        SetupPrometheusExportsFromConfig()
+        if getattr(settings, 'PROMETHEUS_EXPORT_MIGRATIONS', True):
+            ExportMigrations()
+
+
     """Monitoring middleware that should run before other middlewares."""
     def process_request(self, request):
         requests_total.inc()
