@@ -1,5 +1,6 @@
 from prometheus_client import Counter, Histogram
 from django.conf import settings
+from django.utils.deprecation import MiddlewareMixin
 from django_prometheus.exports import SetupPrometheusExportsFromConfig
 from django_prometheus.migrations import ExportMigrations
 from django_prometheus.utils import Time, TimeSince, PowersOf
@@ -20,7 +21,7 @@ requests_unknown_latency_before = Counter(
      'django_http_requests_latency_including_middlewares_seconds).'))
 
 
-class PrometheusBeforeMiddleware(object):
+class PrometheusBeforeMiddleware(MiddlewareMixin):
 
     def __init__(self, get_response=None):
         SetupPrometheusExportsFromConfig()
@@ -102,7 +103,7 @@ exceptions_by_view = Counter(
     ['view_name'])
 
 
-class PrometheusAfterMiddleware(object):
+class PrometheusAfterMiddleware(MiddlewareMixin):
     """Monitoring middleware that should run after other middlewares."""
     def _transport(self, request):
         return 'https' if request.is_secure() else 'http'
