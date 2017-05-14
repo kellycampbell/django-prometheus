@@ -2,6 +2,9 @@ from __future__ import absolute_import, unicode_literals
 
 from time import time
 
+from django_prometheus.utils import Time, TimeSince, TimeBuckets, PowersOf
+
+
 # def get_new_connection(self, *args, **kwargs):
 #     connections_total.labels(self.alias, self.vendor).inc()
 #     try:
@@ -74,22 +77,19 @@ class CursorWrapper(object):
 
     def _record(self, bulk, method, sql, params):
         self._exceptions = {} # type: count
-        start_time = time()
+        start_time = Time()
         try:
             with ExceptionCounterByType(self):
                 return method(sql, params)
         finally:
-            stop_time = time()
-            duration = (stop_time - start_time) * 1000
+            time_since = TimeSince(start_time)
 
             alias = getattr(self.db, 'alias', 'default')
             conn = self.db.connection
 
             record_params = {
                 'alias': alias,
-                'duration': duration,
-                'start_time': start_time,
-                'stop_time': stop_time,
+                'duration': time_since,
                 # 'is_select': sql.lower().strip().startswith('select'),
                 'is_bulk': bulk
             }

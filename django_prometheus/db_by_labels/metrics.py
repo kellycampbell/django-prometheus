@@ -1,6 +1,6 @@
 
 from prometheus_client import Counter, Histogram
-from django_prometheus.utils import Time, TimeSince, PowersOf
+from django_prometheus.utils import Time, TimeSince, TimeBuckets, PowersOf
 
 
 connections_total = Counter(
@@ -22,17 +22,20 @@ execute_total = Counter(
 execute_duration = Histogram(
     'django_db_execute_duration_seconds',
     'Histogram of duration of db query execution by view, database',
-    ['view', 'alias'])
+    ['view', 'alias'],
+    buckets=TimeBuckets())
 
 execute_many_total = Counter(
     'django_db_execute_many_total',
     'Counter of executed statements in bulk operations by view and database.',
-    ['view', 'alias'])
+    ['view', 'alias'],
+    buckets=TimeBuckets())
 
 execute_many_duration = Histogram(
     'django_db_execute_many_duration_seconds',
     'Histogram of duration of bulk db query execution by view, database',
-    ['view', 'alias'])
+    ['view', 'alias'],
+    buckets=TimeBuckets())
 
 errors_total = Counter(
     'django_db_errors_total',
