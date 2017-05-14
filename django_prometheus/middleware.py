@@ -89,7 +89,7 @@ exceptions_by_type = Counter(
 exceptions_by_view = Counter(
     'django_http_exceptions_total_by_view',
     'Count of exceptions by view.',
-    ['view_name'])
+    ['view'])
 
 
 class PrometheusAfterMiddleware(object):
