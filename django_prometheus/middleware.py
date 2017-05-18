@@ -4,6 +4,13 @@ from django_prometheus.exports import SetupPrometheusExportsFromConfig
 from django_prometheus.migrations import ExportMigrations
 from django_prometheus.utils import Time, TimeSince, TimeBuckets, PowersOf
 
+import django
+ 
+if django.VERSION >= (1, 10, 0):
+    from django.utils.deprecation import MiddlewareMixin
+else:
+    MiddlewareMixin = object
+
 requests_total = Counter(
     'django_http_requests_before_middlewares_total',
     'Total count of requests before middlewares run.')
@@ -105,7 +112,7 @@ exceptions_by_view = Counter(
     ['view'])
 
 
-class PrometheusAfterMiddleware(object):
+class PrometheusAfterMiddleware(MiddlewareMixin):
     """Monitoring middleware that should run after other middlewares."""
     def _transport(self, request):
         return 'https' if request.is_secure() else 'http'
