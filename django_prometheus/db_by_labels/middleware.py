@@ -63,7 +63,7 @@ class Recording(object):
                 execute_many_duration.labels(self.view, alias).observe(duration)
             if 'exceptions' in record:
                 for (ex_type, count) in record['exceptions'].iteritems():
-                    errors_total.labels(view, alias, ex_type).inc(count)
+                    errors_total.labels(self.view, alias, ex_type).inc(count)
 
 
 class PrometheusDatabaseMiddleware(MiddlewareMixin):
